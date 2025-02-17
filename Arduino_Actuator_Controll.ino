@@ -1,5 +1,4 @@
-volatile int leftEncoderPosition;  // left encoder tick counter
-volatile int rightEncoderPosition;  // right encoder tick counter
+
 #define leftEncoderPinA 2
 #define leftEncoderPinB 3
 
@@ -46,6 +45,7 @@ private:
     int pin_A;
     int pin_B;
     volatile int position;
+    int positionCopy;
     int lastPosition;
     int revolusion, lastRevolusion;
     float angle, lastAngle;
@@ -115,7 +115,7 @@ public:
         return angularSpeed;  // Keep the last speed to avoid spikes
     }
         //angle = position / 2.73; // Convert encoder ticks to degrees
-        angularSpeed = ( (revolusion + position / 982.8f) - (lastRevolusion + lastPosition / 982.8f) )*2*3.14159265 / deltaTime; // Radians per second
+        angularSpeed = ( (revolusion + position / 982.8f) - (lastRevolusion + lastPosition / 982.8f) )*2*PI / deltaTime; // Radians per second
         
         lastTime = currentTime;
         lastPosition = position;
@@ -147,7 +147,8 @@ private:
 public:
     // Constructor to initialize Motor and Sensor references
     Controller(Motor& motor, Sensor& encoder) : motor(motor), encoder(encoder) {}
-    int desiredSpeed = 3 ;
+    float desiredSpeed = 3;
+    
     void PID() {
        float rawSpeed = encoder.getSpeed();
        filteredSpeed = lowPassFilter(rawSpeed);
@@ -201,14 +202,32 @@ void setup() {
 
 
 void loop() {
-      if (Serial.available()) { //Read Serial Port
-          targetSpeed = Serial.parseFloat();  // Update desired speed from user input
-          leftMotorController.desiredSpeed = targetSpeed;
-          while (Serial.available()) Serial.read();  // Clear buffer
-      }
-      
+    readSerial();
     leftMotorController.PID();
-    if (counter%70 == 0){Serial.println(leftMotorController.getFilteredSpeed());}
+    //rightMotorController.PID();
+    //if (counter%70 == 0){Serial.println(leftMotorController.getFilteredSpeed());}
     counter++;
-    delay(2.5);
+    delay(3);
+}
+
+void readSerial(){
+    if (Serial.available()) { 
+        String input = Serial.readStringUntil('\n');  // Read full input until newline
+        input.trim();  // Remove any trailing spaces or newlines
+
+        if (input.length() > 1) {  // Ensure input is valid
+            char direction = input[0];  // First character should be 'L' or 'R'
+            targetSpeed = input.substring(1).toFloat();  // Convert remaining part to float
+            
+
+            if (direction == 'L') {
+                leftMotorController.desiredSpeed = targetSpeed;
+//                Serial.print("Targer Speed: ");
+//                Serial.println(leftMotorController.desiredSpeed);
+            } else if (direction == 'R') {
+                //rightMotorController.desiredSpeed = targetSpeed;
+            }
+
+        }
+    }
 }
