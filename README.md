@@ -4,7 +4,8 @@ Description:
 
 This project implements motor control system using PID (Proportional-Integral-Derivative) control with encoder feedback for precise speed regulation. It is designed to work with an Arduino-based setup, controlling two DC motor using PWM signals and reading encoder data for closed-loop feedback.
 
-Features
+
+Features:
 
 Motor Control Class: Handles motor initialization, direction control, and speed control via PWM.
 
@@ -16,7 +17,8 @@ Serial Input Handling: Allows speed commands via serial communication.
 
 Low-Pass Filtering: Smooths out speed measurements to reduce noise.
 
-Hardware Requirements
+
+Hardware Requirements:
 
 Arduino board
 
@@ -27,6 +29,7 @@ Quadrature encoder
 Power supply suitable for the motor
 
 Connection cables
+
 
 Pin Configuration
 
@@ -44,6 +47,7 @@ Channel A -> Pin 2 (Interrupt)
 
 Channel B -> Pin 3
 
+
 Installation
 
 Clone this repository:
@@ -53,6 +57,7 @@ git clone https://github.com/yourusername/motor-control.git
 Open the project in Arduino IDE.
 
 Upload the sketch to your Arduino board.
+
 
 Usage
 
@@ -65,6 +70,7 @@ L3.0 → Sets left motor speed to 3 rad/s.
 R2.5 → Sets right motor speed to 2.5 rad/s (if implemented).
 
 Observe the motor responding to the speed commands with PID regulation.
+
 
 Code Structure
 
