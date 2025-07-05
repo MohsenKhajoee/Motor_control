@@ -1,85 +1,10 @@
-Motor Control with PID and Encoder Feedback
 
-Description:
+🔹 Code 1: Single Motor with micro-ROS and PID (Left Wheel)
+This code runs a PID-controlled DC motor with encoder feedback on an ESP32 and communicates with ROS 2 using micro-ROS. It defines modular Motor, Encoder, and Controller classes to manage hardware and control logic. The encoder uses the ESP32Encoder library to measure angular position and speed, and a FreeRTOS task runs the PID loop every 10ms to maintain the desired speed. It publishes motor angle and velocity to ROS topics and listens for speed commands (l_cmd_vel) from ROS, making it ideal for real-time robotics applications like differential drive systems.
 
-This project implements motor control system using PID (Proportional-Integral-Derivative) control with encoder feedback for precise speed regulation. It is designed to work with an Arduino-based setup, controlling two DC motor using PWM signals and reading encoder data for closed-loop feedback.
+🔹 Code 2: Dual Motor Control with micro-ROS (Left and Right Wheels)
+This version expands on the first by controlling both left and right motors. It uses custom encoder logic with attachInterrupt() to manually count pulses and calculate revolutions. Each motor has its own Motor, Encoder, and Controller object. micro-ROS is used to publish angle and speed of each wheel and receive independent velocity commands (l_cmd_vel and r_cmd_vel). Only the left PID loop runs in a FreeRTOS task, while the right loop is not explicitly updated in loop(). This setup supports full differential drive control and ROS integration for real-time robot motion.
 
+🔹 Code 3: Standalone Single Motor Control via Serial (No ROS)
+This is a simplified Arduino sketch that controls a single motor using a PID controller, but without ROS. Instead, it receives commands through the serial port (e.g., "L3.5" to set left motor speed to 3.5 rad/s). It uses custom encoder reading via interrupts and manually calculates angular speed and revolutions. The controller uses a low-pass filter on the speed for stability. It’s great for basic motor testing, tuning, or standalone control systems without ROS or networking.
 
-Features:
-
-Motor Control Class: Handles motor initialization, direction control, and speed control via PWM.
-
-Sensor (Encoder) Class: Reads quadrature encoder signals to measure position and speed.
-
-PID Controller Class: Implements a PID control algorithm for accurate speed regulation.
-
-Serial Input Handling: Allows speed commands via serial communication.
-
-Low-Pass Filtering: Smooths out speed measurements to reduce noise.
-
-
-Hardware Requirements:
-
-Arduino board
-
-DC motor with an H-Bridge driver (L298N, BTS7960, etc.)
-
-Quadrature encoder
-
-Power supply suitable for the motor
-
-Connection cables
-
-
-Pin Configuration
-
-Motor Control:
-
-ENA (PWM) -> Pin 9
-
-IN1 -> Pin 7
-
-IN2 -> Pin 8
-
-Encoder:
-
-Channel A -> Pin 2 (Interrupt)
-
-Channel B -> Pin 3
-
-
-Installation
-
-Clone this repository:
-
-git clone https://github.com/yourusername/motor-control.git
-
-Open the project in Arduino IDE.
-
-Upload the sketch to your Arduino board.
-
-
-Usage
-
-Connect the motor, encoder, and driver as per the pin configuration.
-
-Open the serial monitor (9600 baud rate) and send commands:
-
-L3.0 → Sets left motor speed to 3 rad/s.
-
-R2.5 → Sets right motor speed to 2.5 rad/s (if implemented).
-
-Observe the motor responding to the speed commands with PID regulation.
-
-
-Code Structure
-
-Motor class: Controls motor direction and speed.
-
-Sensor class: Reads encoder signals and calculates speed.
-
-Controller class: Implements PID control for speed regulation.
-
-readSerial(): Handles serial input to update desired speed.
-
-loop(): Runs the PID control loop.
